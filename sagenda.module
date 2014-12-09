@@ -82,7 +82,7 @@ function sagenda_block_view($delta = '') {
  */
 function sagenda_reservation() {
   if (variable_get('sagenda_connection')=='NOT CONNECTED') {
-    drupal_set_message(t('<p>You didn.t connected your Sagenda account :</p> <p>1. Create a free account on <a href="https://sagenda.net/Accounts/Register">Sagenda.</a> (setup your .bookable items. and events).</p><p>2. Copy your token (from the backend of sagenda.net Settings / account settings) to your WordPress installation (backend of wp / Settings / Sagenda).</p>'),'warning');
+    drupal_set_message(t('<p>You didn.t connected your Sagenda account :</p> <p>1. Create a free account on <a href="https://sagenda.net/Accounts/Register">Sagenda.</a> (setup your .bookable items. and events).</p><p>2. Copy your token (from the backend of sagenda.net Settings / account settings) to your WordPress installation (backend of wp / Settings / Sagenda).</p>'), 'warning');
   }
   //Get the bookable items
   $bookable_items = array();
@@ -98,10 +98,10 @@ function sagenda_reservation() {
     '#default_value' => '',
     '#title' => t('Start date'),
     '#attributes' => array(
-			   'class' => array('datepicker'),
-			   'class' => array('sagenda-icon'),
-			   'readonly'=>'readonly',
-			   ),
+      'class' => array('datepicker'),
+      'class' => array('sagenda-icon'),
+      'readonly' => 'readonly',
+    ),
   );
   $form['sagenda_reservation']['end_date'] = array(
     '#type' => 'textfield',
@@ -109,10 +109,10 @@ function sagenda_reservation() {
     '#default_value' => '',
     '#title' => t('End date'),
     '#attributes' => array(
-			   'class' => array('datepicker'),
-			   'class' => array('sagenda-icon'),
-			   'readonly'=>'readonly'
-			   ),
+      'class' => array('datepicker'),
+      'class' => array('sagenda-icon'),
+      'readonly' => 'readonly',
+    ),
   );
   $form['sagenda_reservation']['bookable_items'] = array(
     '#type' => 'select',
@@ -154,7 +154,7 @@ function sagenda_reservation() {
     '#default_value' => '',
     '#title' => t('First Name'),
     '#attributes' => array(
-			   'placeholder' => t('First Name')
+      'placeholder' => t('First Name')
     ),
   );
   $form['sagenda_booking']['last_name'] = array(
@@ -165,7 +165,7 @@ function sagenda_reservation() {
     '#default_value' => '',
     '#title' => t('Last Name'),
     '#attributes' => array(
-			   'placeholder' => t('Last Name')
+      'placeholder' => t('Last Name')
     ),
   );
   $form['sagenda_booking']['phone_no'] = array(
@@ -176,7 +176,7 @@ function sagenda_reservation() {
     '#default_value' => '',
     '#title' => t('Phone Number'),
     '#attributes' => array(
-			   'placeholder' => t('Phone Number')
+      'placeholder' => t('Phone Number')
     ),
   );
   $form['sagenda_booking']['email'] = array(
@@ -187,7 +187,7 @@ function sagenda_reservation() {
     '#default_value' => '',
     '#title' => t('Email'),
     '#attributes' => array(
-			   'placeholder' => t('Email')
+      'placeholder' => t('Email')
     ),
   );
   $form['sagenda_booking']['description'] = array(
@@ -266,11 +266,11 @@ function sagenda_booking($form, &$form_state) {
   $result1 = json_decode($result);
   //  dpm($result1);
   if ($result1->Success) {
-    drupal_set_message(t("You have successfully subscribed to this event."),'status');
+    drupal_set_message(t("You have successfully subscribed to this event."), 'status');
     return TRUE;
   } 
   else {
-    drupal_set_message(t($result1->Message),'error');
+    drupal_set_message(t(check_plain(filter_xss($result1->Message))), 'error');
     return FALSE;
   }
   
