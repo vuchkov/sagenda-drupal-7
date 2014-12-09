@@ -1,0 +1,284 @@
+<?php
+/**
+ * @file
+ * Sagenda Module.
+ */
+// declare global variable
+define('API_URL', 'http://www.sagenda.net/api/'); 
+/**
+ *Implementing hook_menu
+ */
+function sagenda_menu() {
+ // Administration pages.
+  $items = array();
+  $items['admin/config/sagenda/settings'] = array(
+    'title' => 'Sagenda for Drupal: Sagenda Settings',
+    'description' => 'Sagenda Authentication Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('sagenda_settings'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'sagenda.admin.inc',
+  );
+  $items['sagenda/sagenda'] = array(
+    'title' => 'Online Reservation',
+    'description' => '',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('sagenda_reservation'),
+    'access arguments' => array('View published content'),
+  );
+  $items['sagenda/booking'] = array(
+    'title' => 'Online Reservation',
+    'description' => '',
+    'page callback' => 'sagenda_booking',
+    'access arguments' => array('View published content'),
+  );
+  return $items;
+}
+
+/**
+ * Implementing hook_init
+ */
+function sagenda_init() {
+// create Drupal settings
+  $my_settings = array(
+    'authToken' => variable_get('sagenda_auth_token', 'none'),
+    'apiURL' => 'http://www.sagenda.net/api/'
+  );
+  drupal_add_css(drupal_get_path('module', 'sagenda') . '/css/sagenda.css');
+  drupal_add_js(drupal_get_path('module', 'sagenda') . '/js/sagenda.js');
+  // add datepicker JS library
+  drupal_add_library('system', 'ui.datepicker');
+  drupal_add_js("(function ($) { $('#edit-start-date').datepicker({dateFormat: 'mm-dd-yy', minDate:0}); })(jQuery);", array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
+  drupal_add_js("(function ($) { $('#edit-end-date').datepicker({dateFormat: 'mm-dd-yy', minDate:0}); })(jQuery);", array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
+  // export php variable to JS
+  drupal_add_js(array('sagenda' => $my_settings), 'setting');
+}
+/**
+ * Implements hook_block_info().
+ */
+function sagenda_block_info() {
+  $blocks['sagenda'] = array(
+    'info' => t('Sagenda Block'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $blocks;
+}
+ 
+/**
+ * Implements hook_block_view().
+ */
+function sagenda_block_view($delta = '') {  
+  $block = array();
+  switch ($delta) {
+  case 'sagenda':
+    $block['content'] = drupal_get_form('sagenda_reservation');
+    break;
+  }
+  return $block;
+}
+
+/**
+ * Sagenda Reservation Form
+ */
+function sagenda_reservation() {
+  if (variable_get('sagenda_connection')=='NOT CONNECTED') {
+    drupal_set_message(t('<p>You didn.t connected your Sagenda account :</p> <p>1. Create a free account on <a href="https://sagenda.net/Accounts/Register">Sagenda.</a> (setup your .bookable items. and events).</p><p>2. Copy your token (from the backend of sagenda.net Settings / account settings) to your WordPress installation (backend of wp / Settings / Sagenda).</p>'),'warning');
+  }
+  //Get the bookable items
+  $bookable_items = array();
+  $form['sagenda_reservation'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Sagenda Reservation'),
+    '#prefix' => '<div class="sagenda_reservation_form"><div class="confirm-messages"></div><div class="error-messages"></div>',
+    '#suffix' => '</div>',
+  );
+  $form['sagenda_reservation']['start_date'] = array(
+    '#type' => 'textfield',
+    '#description' => t(''),
+    '#default_value' => '',
+    '#title' => t('Start date'),
+    '#attributes' => array(
+			   'class' => array('datepicker'),
+			   'class' => array('sagenda-icon'),
+			   'readonly'=>'readonly',
+			   ),
+  );
+  $form['sagenda_reservation']['end_date'] = array(
+    '#type' => 'textfield',
+    '#description' => t(''),
+    '#default_value' => '',
+    '#title' => t('End date'),
+    '#attributes' => array(
+			   'class' => array('datepicker'),
+			   'class' => array('sagenda-icon'),
+			   'readonly'=>'readonly'
+			   ),
+  );
+  $form['sagenda_reservation']['bookable_items'] = array(
+    '#type' => 'select',
+    '#description' => t(''),
+    '#options' =>  array(0 => t('Bookable Item')),
+    '#default_value' => '',
+    '#title' => t('Bookable Items'),
+    '#prefix' => '<div class="bookable_items">',
+    '#suffix' => '</div>',
+    '#after_build' => array('validate_items'),
+  );
+  $form['sagenda_reservation']['bookable_dates'] = array(
+    '#type' => 'radios',
+    '#description' => t(''),
+    '#options' =>  array(),
+    '#default_value' => '',
+    '#title' => t('Click an Event to book it:'),
+    '#prefix' => '<div class="bookable_dates" style="display:none;">',
+    '#suffix' => '</div>',
+  );
+  $form['sagenda_booking'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Sagenda Booking'),
+    '#prefix' => '<div class="booking_form" style="display:none;">',
+    '#suffix' => '</div>',
+  );
+  $form['sagenda_booking']['courtesy'] = array(
+    '#type' => 'radios',
+    '#description' => '',
+    '#options' =>  array('Mr' => t('Mr'), 'Mrs' => t('Mrs')),
+    '#default_value' => t('Mr'),
+    '#title' => t('Courtesy'),
+  );
+  $form['sagenda_booking']['first_name'] = array(
+    '#type' => 'textfield',
+    '#description' => '',
+    '#size' =>  60,
+    '#maxlenth' => 128,
+    '#default_value' => '',
+    '#title' => t('First Name'),
+    '#attributes' => array(
+			   'placeholder' => t('First Name')
+    ),
+  );
+  $form['sagenda_booking']['last_name'] = array(
+    '#type' => 'textfield',
+    '#description' => '',
+    '#size' =>  60,
+    '#maxlenth' => 128,
+    '#default_value' => '',
+    '#title' => t('Last Name'),
+    '#attributes' => array(
+			   'placeholder' => t('Last Name')
+    ),
+  );
+  $form['sagenda_booking']['phone_no'] = array(
+    '#type' => 'textfield',
+    '#description' => '',
+    '#size' =>  60,
+    '#maxlenth' => 128,
+    '#default_value' => '',
+    '#title' => t('Phone Number'),
+    '#attributes' => array(
+			   'placeholder' => t('Phone Number')
+    ),
+  );
+  $form['sagenda_booking']['email'] = array(
+    '#type' => 'textfield',
+    '#description' => '',
+    '#size' =>  60,
+    '#maxlenth' => 128,
+    '#default_value' => '',
+    '#title' => t('Email'),
+    '#attributes' => array(
+			   'placeholder' => t('Email')
+    ),
+  );
+  $form['sagenda_booking']['description'] = array(
+    '#type' => 'textarea',
+    '#description' => '',
+    '#rows' =>  5,
+    '#cols' => 40,
+    '#default_value' => '',
+    '#title' => t('Description'),
+  );
+  $form['sagenda_booking']['event_identifier'] = array(
+    '#type' => 'hidden',
+    '#size' =>  60,
+    '#attributes' => array(
+      'id' => 'event_identifier'
+    ),
+  );
+  $form['sagenda_booking']['event_schedule_id'] = array(
+    '#type' => 'hidden',
+    '#size' =>  60,
+    '#attributes' => array(
+      'id' => 'event_schedule_id'
+    ),
+  );
+  $form['sagenda_booking']['back_cal'] = array(
+    '#type' => 'button',
+    '#value' => t('BACK TO CALENDAR'),
+    '#attributes' => array(
+      'id' => 'back_cal'
+     ),
+
+  );
+  $form['sagenda_booking']['mysubmit'] = array(
+    '#type' => 'submit',
+    '#value' => t('SUBMIT'),
+    '#description' => '',
+    '#submit' => array('sagenda_booking'),
+  );
+  return $form;
+}
+
+/*
+ * Custom validation function for the Bookable items field
+ * In which items are generated dynamically
+ */
+function validate_items($form_element) {
+  unset($form_element['#needs_validation']);
+  return $form_element;
+}
+
+/**
+ * Callback for booking reservation form
+ */
+function sagenda_booking($form, &$form_state) {
+  //capture form values
+  $event_identifier = $form_state['values']['event_identifier'];
+  $bookable_item_id = $form_state['values']['bookable_items'];
+  $event_schedule_id = $form_state['values']['event_schedule_id'];
+  $courtesy = $form_state['values']['courtesy'];
+  $first_name = $form_state['values']['first_name'];
+  $last_name = $form_state['values']['last_name'];
+  $phone_no = $form_state['values']['phone_no'];
+  $email = $form_state['values']['email'];
+  $description = $form_state['values']['description'];
+  
+  $booking_data = array("ApiToken" => get_api_token(), "EventIdentifier" => $event_identifier, "BookableItemId" => $bookable_item_id, "EventScheduleId" => $event_schedule_id, "Courtesy" => $courtesy, "FirstName" => $first_name, "LastName" => $last_name, "PhoneNumber" => $phone_no, "Email" => $email, "Description" => $description);
+  $json_data = json_encode($booking_data);
+  
+  $ch = curl_init(API_URL . 'Events/SetBooking');
+  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($json_data)));
+  //dpm($ch);
+  $result = curl_exec($ch);
+  $result1 = json_decode($result);
+  //  dpm($result1);
+  if ($result1->Success) {
+    drupal_set_message(t("You have successfully subscribed to this event."),'status');
+    return TRUE;
+  } 
+  else {
+    drupal_set_message(t($result1->Message),'error');
+    return FALSE;
+  }
+  
+}
+
+/**
+ * Return the token of Sagenda
+ */
+function get_api_token() {
+  return variable_get('sagenda_auth_token');
+}

@@ -1,0 +1,82 @@
+#edit-bookable-dates {
+width: 95%;
+}
+.add-border{ 
+    float:left;
+    width:100%; 
+}
+#edit-bookable-dates .add-border input[ type="radio"]{ 
+    float:left;
+    margin:0.5em 0.4em 0 0 !important; 
+}
+#edit-bookable-dates label{ 
+    float:left; 
+    line-height:1.8em;
+}
+#edit-bookable-dates .add-border{ 
+    border:1px solid #ccc; 
+    margin-bottom: 0.4em;
+    padding: 0.3em;
+}
+
+.fieldset-wrapper .form-item-start-date,
+.fieldset-wrapper .form-item-end-date,
+.fieldset-wrapper .bookable_items{
+    float:left;
+    width:95%; 
+}
+.sagenda-icon {
+    background: url(../images/calendar-icon.png) right top no-repeat;
+    height: 16px;
+    width:100%;
+}
+
+.form-item-bookable-dates > label{ 
+    float:left;
+    width:100%; 
+}
+
+span.status {
+    color: #fff;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 6px;
+}
+
+.positive {
+    background-color: green;
+}
+
+.negative {
+    background-color: red;
+}
+
+.form-item-sagenda-auth-token label{ 
+    float:left; 
+    padding-right:15px !important;
+}
+#edit-connection-status .status.positive { 
+    margin-left:325px;
+}
+#edit-connection-status .status.negative{ 
+    margin-left:325px;
+}
+#sagenda-settings #edit-sagenda .fieldset-wrapper{ 
+    margin-top:-33px;
+}
+#sagenda-settings #edit-sagenda .fieldset-legend{ 
+    margin-top:0.95em !important;
+}
+
+.sagenda_reservation_form .error-messages {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #a94442;
+    display: none;
+    max-width: 350px;
+    margin-bottom: 20px;
+    padding: 15px;
+}

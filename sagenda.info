@@ -1,0 +1,7 @@
+;$Id:
+name = Sagenda
+description = A module for integrating with Sagenda
+package = Sagenda
+core = 7.x
+configure = admin/config/sagenda/settings
+php = 5.2
