@@ -31,20 +31,26 @@ function sagenda_settings() {
  */
 function sagenda_settings_form_submit($form, $form_state) {
   $auth_token = $form_state['values']['sagenda_auth_token'];
-  $ch = curl_init(API_URL . 'ValidateAccount/' . $auth_token);
-  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-  $result = curl_exec($ch);
-  $result1 = json_decode($result);
-  if ($result1->Success!=FALSE) {
-    variable_set('sagenda_connection','CONNECTED');
-    drupal_set_message(t("You have successfully connected."),'status');
-    return 1;
-  } 
-  else {
-    variable_set('sagenda_connection','NOT CONNECTED');
-    drupal_set_message(t("Not Connected. " . $result1->Message),'error');
-    return 0;
+  if ($auth_token) {
+    $ch = curl_init(API_URL . 'ValidateAccount/' . $auth_token);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    $result = curl_exec($ch);
+    $result1 = json_decode($result);
+    if ($result1->Success!=FALSE) {
+      variable_set('sagenda_connection','CONNECTED');
+      drupal_set_message(t("You have successfully connected."),'status');
+      return 1;
+    } 
+    else {
+      variable_set('sagenda_connection','NOT CONNECTED');
+      drupal_set_message(t("Not Connected. " . $result1->Message),'error');
+      return 0;
+    }
+  } else {
+      variable_set('sagenda_connection','NOT CONNECTED');
+      drupal_set_message(t("Please enter the auth token. "),'error');
+      return 0;
   }
 }
 
