@@ -20,6 +20,7 @@
       
       $('#edit-start-date, #edit-end-date').bind('change', function(){
 	  $('#edit-bookable-items').val(0);
+	  $('#edit-bookable-dates').hide();
 	  return check_dates();
 	});
       
@@ -71,13 +72,14 @@
 		  success: function(data) {
 		  data1 = $.parseJSON(data);
 		  if(data1.length == 0) {
-		    $("#edit-bookable-dates").text("No events found for the bookable item within the selected date range.");
-		    $(".bookable_dates").css("display", "block"); 
+		      $("#edit-bookable-dates").show().text("No events found for the bookable item within the selected date range.");
+		      $(".bookable_dates").css("display", "block"); 
 		  } else {
-		    $("#edit-bookable-dates").text('');
-		    $.each(data1, function(idx, obj) {
-			$("#event_schedule_id").val(obj.EventScheduleId);
-			$("#edit-bookable-dates").append('<div class="add-border"><input type="radio" value='+obj.BookableItems[0].Id+' id='+obj.EventIdentifier+' name="book_room"/><label for="radio1">'+obj.DateDisplay+" : "+obj.BookableItems[0].Name+'</label></div>');
+		      $("#edit-bookable-dates").text('');
+		      $('#edit-bookable-dates').show();
+		      $.each(data1, function(idx, obj) {
+			  $("#event_schedule_id").val(obj.EventScheduleId);
+			  $("#edit-bookable-dates").append('<div class="add-border"><input type="radio" value='+obj.BookableItems[0].Id+' id='+obj.EventIdentifier+' name="book_room"/><label for="radio1">'+obj.DateDisplay+" : "+obj.BookableItems[0].Name+'</label></div>');
 		      });
 		  }
 		  
