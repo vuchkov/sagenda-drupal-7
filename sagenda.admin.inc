@@ -44,7 +44,7 @@ function sagenda_settings_form_submit($form, $form_state) {
     } 
     else {
       variable_set('sagenda_connection', 'NOT CONNECTED');
-      drupal_set_message(t("Not Connected. " . filter_xss($result1->Message)), 'error');
+      drupal_set_message(t('@error', array('@error' => $result1->Message)), 'error');
       return 0;
     }
   } 

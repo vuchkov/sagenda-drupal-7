@@ -270,7 +270,7 @@ function sagenda_booking($form, &$form_state) {
     return TRUE;
   } 
   else {
-    drupal_set_message(t(check_plain(filter_xss($result1->Message))), 'error');
+    drupal_set_message(t('@error', array('@error' => $result1->Message)), 'error');
     return FALSE;
   }
   
