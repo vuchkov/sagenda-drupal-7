@@ -19,19 +19,6 @@ function sagenda_menu() {
     'access arguments' => array('administer site configuration'),
     'file' => 'sagenda.admin.inc',
   );
-  $items['sagenda/sagenda'] = array(
-    'title' => 'Online Reservation',
-    'description' => '',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('sagenda_reservation'),
-    'access arguments' => array('View published content'),
-  );
-  $items['sagenda/booking'] = array(
-    'title' => 'Online Reservation',
-    'description' => '',
-    'page callback' => 'sagenda_booking',
-    'access arguments' => array('View published content'),
-  );
   return $items;
 }
 

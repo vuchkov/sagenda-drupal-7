@@ -67,7 +67,7 @@
 		  crossDomain : true,
 		  dataType: 'html',
 		  data: {
-		'bookableItemId[0]' : bookable_item_id,
+		'bookableItemId': bookable_item_id,
 		    },
 		  success: function(data) {
 		  data1 = $.parseJSON(data);
