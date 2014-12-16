@@ -17,7 +17,8 @@
 	      });
 	  }
 	}); 
-      
+
+      $(".bookable_dates").after('<a href="http://www.sagenda.net" target="_blank" class="sagenda-ref-link">Create a free Booking Account on Sagenda!</a>');      
       $('#edit-start-date, #edit-end-date').bind('change', function(){
 	  $('#edit-bookable-items').val(0);
 	  $('#edit-bookable-dates').hide();
