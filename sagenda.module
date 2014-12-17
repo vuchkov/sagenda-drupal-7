@@ -83,7 +83,7 @@ function sagenda_reservation() {
     '#type' => 'textfield',
     '#description' => t(''),
     '#default_value' => '',
-    '#title' => t('Start date'),
+    '#title' => t('From date'),
     '#attributes' => array(
       'class' => array('datepicker'),
       'class' => array('sagenda-icon'),
@@ -94,7 +94,7 @@ function sagenda_reservation() {
     '#type' => 'textfield',
     '#description' => t(''),
     '#default_value' => '',
-    '#title' => t('End date'),
+    '#title' => t('To date'),
     '#attributes' => array(
       'class' => array('datepicker'),
       'class' => array('sagenda-icon'),
