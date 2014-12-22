@@ -37,6 +37,7 @@ function sagenda_settings_form_submit($form, $form_state) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     $result = curl_exec($ch);
     $result1 = json_decode($result);
+    dpm($result);
     if ($result1->Success!=FALSE) {
       variable_set('sagenda_connection', 'CONNECTED');
       drupal_set_message(t("You have successfully connected."), 'status');
