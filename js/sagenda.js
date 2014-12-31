@@ -96,10 +96,16 @@
       
       $("#sagenda-reservation").submit(function(e) {
 	  var filter = /^[\w\-\.\+]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/;
+	  var numericReg = /^\d*[0-9](|.\d*[0-9]|,\d*[0-9])?$/;
 	  is_error = true;
 	  if($('#edit-first-name').val().trim().length==0) {
 	    $("#edit-first-name").css("background" , "#FFAAAA");
 	    is_error = false;
+	  } else if ($('#edit-first-name').val().match(/\d+/g)) {
+	      alert("First name should use letters only");
+	      $("#edit-first-name").css("background" , "#FFAAAA");
+	      $("#edit-first-name").focus();
+	      is_error = false;
 	  }
 	  else {
 	    $("#edit-first-name").css("background" , "#FFFFFF");
@@ -108,6 +114,11 @@
 	  if($('#edit-last-name').val().trim().length==0) {
 	    $("#edit-last-name").css("background" , "#FFAAAA");
 	    is_error = false;
+	  } else if ($('#edit-last-name').val().match(/\d+/g)) {
+	      alert("Last name should use letters only");
+	      $("#edit-last-name").css("background" , "#FFAAAA");
+	      $("#edit-last-name").focus();
+	      is_error = false;
 	  }
 	  else {
 	    $("#edit-last-name").css("background" , "#FFFFFF");
@@ -116,6 +127,11 @@
 	  if($('#edit-phone-no').val().trim().length==0) {
 	    $("#edit-phone-no").css("background" , "#FFAAAA");
 	    is_error = false;
+	  } else if (!numericReg.test($('#edit-phone-no').val())) {
+	      alert("Phone should use numerics only");
+	      $("#edit-phone-no").css("background" , "#FFAAAA");
+	      $("#edit-phone-no").focus();
+	      is_error = false;
 	  }
 	  else {
 	    $("#edit-phone-no").css("background" , "#FFFFFF");
@@ -127,17 +143,10 @@
 	  }
 	  else if (filter.test($("#edit-email").val())==false){
 	    $("#edit-email").css("background" , "#FFAAAA");
+	    $("#edit-email").focus();
 	    is_error = false;
 	  } else {
 	    $("#edit-email").css("background" , "#FFFFFF");
-	  }
-	  
-	  if($('#edit-description').val().trim().length==0) {
-	    $("#edit-description").css("background" , "#FFAAAA");
-	    is_error = false;
-	  }
-	  else {
-	    $("#edit-description").css("background" , "#FFFFFF");
 	  }
 	  return is_error;
 	});
