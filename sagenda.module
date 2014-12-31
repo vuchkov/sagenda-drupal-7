@@ -35,8 +35,8 @@ function sagenda_init() {
   drupal_add_js(drupal_get_path('module', 'sagenda') . '/js/sagenda.js');
   // add datepicker JS library
   drupal_add_library('system', 'ui.datepicker');
-  drupal_add_js("(function ($) { $('#edit-start-date').datepicker({dateFormat: 'mm-dd-yy', minDate:0}); })(jQuery);", array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
-  drupal_add_js("(function ($) { $('#edit-end-date').datepicker({dateFormat: 'mm-dd-yy', minDate:0}); })(jQuery);", array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
+  drupal_add_js("(function ($) { $('#edit-start-date').datepicker({dateFormat: 'dd M yy', minDate:0}); })(jQuery);", array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
+  drupal_add_js("(function ($) { $('#edit-end-date').datepicker({dateFormat: 'dd M yy', minDate:0}); })(jQuery);", array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
   // export php variable to JS
   drupal_add_js(array('sagenda' => $my_settings), 'setting');
 }
@@ -251,7 +251,6 @@ function sagenda_booking($form, &$form_state) {
   //dpm($ch);
   $result = curl_exec($ch);
   $result1 = json_decode($result);
-  //  dpm($result1);
   if ($result1->Success) {
     drupal_set_message(t("You have successfully subscribed to this event."), 'status');
     return TRUE;
