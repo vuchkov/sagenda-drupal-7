@@ -80,3 +80,12 @@ span.status {
     margin-bottom: 20px;
     padding: 15px;
 }
+#edit-courtesy {
+    float:left;
+    width:100%; 
+}
+#edit-courtesy .form-item-courtesy {
+    width:auto; 
+    float:left; 
+    margin-right:10px;
+}
